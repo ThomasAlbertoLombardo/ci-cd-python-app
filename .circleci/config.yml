@@ -3,17 +3,19 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/openjdk:17.0
+      - image: cimg/python:3.8  # Cambia a una imagen base de Python
+      - image: cimg/node:14  # Añade una imagen de Node.js
     steps:
       - checkout
       - run:
-          name: Install Python
+          name: Install Java
           command: |
             sudo apt-get update
-            sudo apt-get install -y python3 python3-pip python3-venv
+            sudo apt-get install -y openjdk-17-jdk  # Instalar Java
       - run:
-          name: Install dependencies
+          name: Install Python dependencies
           command: |
+            sudo apt-get install -y python3-pip python3-venv
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
@@ -29,22 +31,29 @@ jobs:
             . venv/bin/activate
             pytest --cov=app --cov-report=xml --cov-report=term
       - run:
-          name: Run SonarCloud analysis
+          name: Run SonarCloud Scanner
           command: |
-            . venv/bin/activate
-            sonar-scanner \
+            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+            unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+            ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
               -Dsonar.projectKey=ThomasAlbertoLombardo_ci-cd-python-app \
               -Dsonar.organization=thomasalbertolombardo \
+              -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=${SONAR_TOKEN} 
+              -Dsonar.login=${SONAR_TOKEN} \
+              -X
       - run:
           name: Run Snyk test
           command: |
             . venv/bin/activate
-            snyk test --all-projects --json > snyk_report.json || true
+            npm install -g snyk  # Instalar Snyk globalmente.
+            snyk auth $SNYK_TOKEN  # Autenticarse con Snyk usando el token.
+            snyk test --all-projects --json > snyk_report.json || true  # Ejecutar el análisis de Snyk.
 
 workflows:
   build-test:
     jobs:
       - build-and-test
+
+
 
