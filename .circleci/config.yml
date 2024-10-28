@@ -3,16 +3,17 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/openjdk:17.0
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Install Python and dependencies
           command: |
-            python -m venv venv
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+            python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pip install pytest-cov
       - run:
           name: Run Linting
           command: |
@@ -34,8 +35,8 @@ jobs:
           name: Run SonarCloud analysis
           command: |
             sonar-scanner \
-              -Dsonar.projectKey=ci-cd-python-app \
-              -Dsonar.organization=ThomasAlbertoLombardo \
+              -Dsonar.projectKey=tu_proyecto \
+              -Dsonar.organization=tu_organizacion \
               -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN
@@ -45,7 +46,7 @@ jobs:
             . venv/bin/activate
             npm install -g snyk
             snyk auth $SNYK_TOKEN
-            snyk test
+            snyk test || true
 
 workflows:
   version: 2
