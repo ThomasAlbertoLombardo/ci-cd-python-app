@@ -37,11 +37,12 @@ jobs:
             wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
             unzip sonar-scanner-cli-5.0.1.3006-linux.zip
             ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
-              -Dsonar.projectKey=ci-cd-python-app \
-              -Dsonar.organization=ThomasAlbertoLombardo \
+              -Dsonar.projectKey=ThomasAlbertoLombardo_ci-cd-python-app \
+              -Dsonar.organization=thomasalbertolombardo \
               -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=${SONAR_TOKEN}
+              -Dsonar.login=${SONAR_TOKEN} \
+              -X
       - run:
           name: Run Snyk Security Scan
           command: |
@@ -54,4 +55,4 @@ workflows:
   main:
     jobs:
       - build-and-test
-
+     
