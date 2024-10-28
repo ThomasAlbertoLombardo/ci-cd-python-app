@@ -40,12 +40,11 @@ jobs:
           command: |
             sonar-scanner \
               -Dsonar.projectKey=ci-cd-python-app \
-              -Dsonar.organization=ThomasAlbertoLombardo \
+              -Dsonar.organization=thomasalbertolombardo \
               -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
-              -Dsonar.python.coverage.reportPaths=coverage.xml \
-              -Dsonar.branch.name=$CIRCLE_BRANCH
+              -Dsonar.python.coverage.reportPaths=coverage.xml
       - run:
           name: Run Snyk Security Scan
           command: |
