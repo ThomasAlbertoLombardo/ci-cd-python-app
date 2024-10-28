@@ -3,19 +3,17 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/python:3.8  # Cambia a una imagen base de Python
-      - image: cimg/node:14  # Añade una imagen de Node.js
+      - image: cimg/openjdk:17.0
     steps:
       - checkout
       - run:
-          name: Install Java
+          name: Install Python
           command: |
             sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk  # Instalar Java
+            sudo apt-get install -y python3 python3-pip python3-venv
       - run:
-          name: Install Python dependencies
+          name: Install dependencies
           command: |
-            sudo apt-get install -y python3-pip python3-venv
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
@@ -46,7 +44,7 @@ jobs:
           name: Run Snyk test
           command: |
             . venv/bin/activate
-            npm install -g snyk  # Instalar Snyk globalmente.
+            npm install -g snyk  # Instalar Snyk globalmente si no está instalado.
             snyk auth $SNYK_TOKEN  # Autenticarse con Snyk usando el token.
             snyk test --all-projects --json > snyk_report.json || true  # Ejecutar el análisis de Snyk.
 
