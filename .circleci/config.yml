@@ -38,13 +38,14 @@ jobs:
       - run:
           name: Run SonarCloud analysis
           command: |
-            java -version
             sonar-scanner \
-              -Dsonar.projectKey=tu_proyecto \
-              -Dsonar.organization=tu_organizacion \
+              -Dsonar.projectKey=ci-cd-python-app \
+              -Dsonar.organization=ThomasAlbertoLombardo \
               -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=$SONAR_TOKEN
+              -Dsonar.login=$SONAR_TOKEN \
+              -Dsonar.python.coverage.reportPaths=coverage.xml \
+              -Dsonar.branch.name=$CIRCLE_BRANCH
       - run:
           name: Run Snyk Security Scan
           command: |
