@@ -1,18 +1,23 @@
 version: 2.1
 
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.1.1
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 jobs:
   build-and-test:
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/openjdk:17.0
     steps:
       - checkout
       - run:
+          name: Install Python
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip python3-venv
+      - run:
           name: Install dependencies
           command: |
-            python -m venv venv
+            python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
