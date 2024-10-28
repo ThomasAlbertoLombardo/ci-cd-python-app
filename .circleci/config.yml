@@ -3,14 +3,14 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/node:lts  # Usar la última versión LTS de Node.js
+      - image: cimg/node:lts
     steps:
       - checkout
       - run:
           name: Install Java
           command: |
             sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk  # Instalar Java
+            sudo apt-get install -y openjdk-17-jdk
       - run:
           name: Install Python
           command: |
@@ -48,9 +48,12 @@ jobs:
           name: Run Snyk test
           command: |
             . venv/bin/activate
-            npm install snyk --save-dev  # Instalar Snyk como dependencia de desarrollo localmente.
-            ./node_modules/.bin/snyk auth $SNYK_TOKEN  # Autenticarse con Snyk usando el token.
-            ./node_modules/.bin/snyk test --all-projects --json > snyk_report.json || true  # Ejecutar el análisis de Snyk.
+            npm install snyk --save-dev
+            ./node_modules/.bin/snyk auth $SNYK_TOKEN
+            ./node_modules/.bin/snyk test --all-projects --json > snyk_report.json || true
+      - store_artifacts:
+          path: snyk_report.json  # Almacenar el reporte como artefacto
+          destination: snyk_report  # Nombre del directorio donde se almacenará
 
 workflows:
   build-test:
