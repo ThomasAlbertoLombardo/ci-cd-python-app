@@ -3,13 +3,17 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/openjdk:17.0
+      - image: cimg/node:lts  # Usar la última versión LTS de Node.js
     steps:
       - checkout
       - run:
-          name: Install Python
+          name: Install Java
           command: |
             sudo apt-get update
+            sudo apt-get install -y openjdk-17-jdk  # Instalar Java
+      - run:
+          name: Install Python
+          command: |
             sudo apt-get install -y python3 python3-pip python3-venv
       - run:
           name: Install dependencies
@@ -44,7 +48,7 @@ jobs:
           name: Run Snyk test
           command: |
             . venv/bin/activate
-            npm install -g snyk  # Instalar Snyk globalmente si no está instalado.
+            npm install -g snyk  # Instalar Snyk globalmente.
             snyk auth $SNYK_TOKEN  # Autenticarse con Snyk usando el token.
             snyk test --all-projects --json > snyk_report.json || true  # Ejecutar el análisis de Snyk.
 
@@ -52,6 +56,3 @@ workflows:
   build-test:
     jobs:
       - build-and-test
-
-
-
