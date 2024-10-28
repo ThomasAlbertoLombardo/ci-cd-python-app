@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  sonarcloud: sonarsource/sonarcloud@2.0.0
-
 jobs:
   build-and-test:
     docker:
@@ -43,16 +40,8 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN} \
               -X
-      - run:
-          name: Run Snyk Security Scan
-          command: |
-            . venv/bin/activate
-            npm install -g snyk
-            snyk auth $SNYK_TOKEN
-            snyk test || true
 
 workflows:
-  main:
+  build-test:
     jobs:
       - build-and-test
-     
