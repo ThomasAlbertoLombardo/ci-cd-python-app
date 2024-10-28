@@ -12,7 +12,7 @@ jobs:
             python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pip install pytest-cov  # Asegúrate de que pytest-cov esté instalado
+            pip install pytest-cov
       - run:
           name: Run Linting
           command: |
@@ -24,14 +24,21 @@ jobs:
             . venv/bin/activate
             pytest --cov=app --cov-report=xml --cov-report=term
       - run:
+          name: Install SonarCloud scanner
+          command: |
+            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+            unzip sonar-scanner-cli-4.7.0.2747-linux.zip
+            echo 'export PATH=$PATH:./sonar-scanner-4.7.0.2747-linux/bin' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
           name: Run SonarCloud analysis
           command: |
-            . venv/bin/activate
             sonar-scanner \
-              -Dsonar.projectKey=tu_proyecto \
-              -Dsonar.organization=tu_organizacion \
+              -Dsonar.projectKey=ci-cd-python-app \
+              -Dsonar.organization=ThomasAlbertoLombardo \
+              -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=$SONAR_TOKEN 
+              -Dsonar.login=$SONAR_TOKEN
       - run:
           name: Run Snyk Security Scan
           command: |
