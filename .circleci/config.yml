@@ -10,7 +10,7 @@ jobs:
           name: Install Java
           command: |
             sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk
+            sudo apt-get install -y openjdk-17-jdk  # Instalar Java
       - run:
           name: Install Python
           command: |
@@ -48,11 +48,9 @@ jobs:
           name: Run Snyk test
           command: |
             . venv/bin/activate
-            npm config set unsafe-perm true
-            npm config set user 0
-            npm install -g snyk 
-            snyk auth $SNYK_TOKEN
-            snyk test --all-projects --json > snyk_report.json || true
+            npm install snyk --save-dev  # Instalar Snyk como dependencia de desarrollo localmente.
+            ./node_modules/.bin/snyk auth $SNYK_TOKEN  # Autenticarse con Snyk usando el token.
+            ./node_modules/.bin/snyk test --all-projects --json > snyk_report.json || true  # Ejecutar el análisis de Snyk.
 
 workflows:
   build-test:
